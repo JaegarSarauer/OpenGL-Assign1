@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -26,6 +26,7 @@
                                 <rect key="frame" x="276" y="617" width="65" height="30"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="65" id="U0Q-33-VXK"/>
                                     <constraint firstAttribute="height" constant="40" id="a2X-Wn-W59"/>
                                     <constraint firstAttribute="width" constant="100" id="rSn-gr-rZz"/>
                                 </constraints>
@@ -34,17 +35,61 @@
                                     <action selector="ResetClick:" destination="BV1-FR-VrT" eventType="touchUpInside" id="he6-4c-0Wr"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pj0-dF-E65">
+                                <rect key="frame" x="16" y="20" width="343" height="52"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="Position:Rotation:">
+                                        <attributes>
+                                            <font key="NSFont" size="18" name=".SFNSDisplay"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dev-07-Ft8">
+                                <rect key="frame" x="16" y="617" width="96" height="30"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="96" id="hm5-xQ-81W"/>
+                                </constraints>
+                                <state key="normal" title="Increment"/>
+                                <connections>
+                                    <action selector="IncrementButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="ou3-hX-qJH"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2X3-DK-S1l">
+                                <rect key="frame" x="137" y="622" width="116" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="116" id="If2-On-kJD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
-                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.70557399611398963" green="0.67382950327232849" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="qFF-7o-A0r" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailingMargin" constant="20" id="2C1-VQ-VzP"/>
+                            <constraint firstItem="qHh-Mt-9TT" firstAttribute="top" secondItem="dev-07-Ft8" secondAttribute="bottom" constant="20" id="2rw-fo-fcs"/>
+                            <constraint firstItem="dev-07-Ft8" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leadingMargin" id="5gZ-IC-0Rl"/>
+                            <constraint firstItem="qHh-Mt-9TT" firstAttribute="top" secondItem="2X3-DK-S1l" secondAttribute="bottom" constant="24" id="KRP-U9-IuU"/>
+                            <constraint firstItem="2X3-DK-S1l" firstAttribute="leading" secondItem="dev-07-Ft8" secondAttribute="trailing" constant="25" id="U0m-yg-Puw"/>
                             <constraint firstItem="qHh-Mt-9TT" firstAttribute="top" secondItem="qFF-7o-A0r" secondAttribute="bottom" constant="20" id="o3I-BM-pGa"/>
+                            <constraint firstItem="qFF-7o-A0r" firstAttribute="leading" secondItem="2X3-DK-S1l" secondAttribute="trailing" constant="23" id="q65-46-KDN"/>
                         </constraints>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="PIn-lB-Hqa" appends="YES" id="hda-QW-tDs"/>
+                            <outletCollection property="gestureRecognizers" destination="c1n-6Z-XNt" appends="YES" id="Dmi-vg-xsm"/>
+                            <outletCollection property="gestureRecognizers" destination="58b-en-lSJ" appends="YES" id="Itq-Z5-kdW"/>
                         </connections>
                     </view>
+                    <connections>
+                        <outlet property="UpdateLabel" destination="pj0-dF-E65" id="SwN-d3-bgJ"/>
+                        <outlet property="swapLabel" destination="2X3-DK-S1l" id="zNQ-kI-syi"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
                 <pinchGestureRecognizer id="PIn-lB-Hqa">
@@ -52,6 +97,16 @@
                         <action selector="OnPinch:" destination="BV1-FR-VrT" id="KUy-0P-8P8"/>
                     </connections>
                 </pinchGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" maximumNumberOfTouches="1" id="c1n-6Z-XNt">
+                    <connections>
+                        <action selector="OnDrag:" destination="BV1-FR-VrT" id="4jI-aT-bjI"/>
+                    </connections>
+                </panGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="2" maximumNumberOfTouches="2" id="58b-en-lSJ">
+                    <connections>
+                        <action selector="OnDoubleDrag:" destination="BV1-FR-VrT" id="5bN-dQ-Z46"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="117.59999999999999" y="122.78860569715144"/>
         </scene>

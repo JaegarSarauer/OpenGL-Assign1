@@ -28,7 +28,7 @@ enum
     NUM_ATTRIBUTES
 };
 
-GLfloat gCubeVertexData[216] = 
+GLfloat gCubeVertexData[216] =
 {
     // Data layout for each line below is:
     // positionX, positionY, positionZ,     normalX, normalY, normalZ,
@@ -86,6 +86,23 @@ GLfloat gCubeVertexData[216] =
     GLuint _vertexBuffer;
     
     bool continueToRotate;
+    
+    CGFloat _scale;
+    
+    CGFloat _xPos;
+    CGFloat _yPos;
+    CGFloat _currentDragX;
+    CGFloat _currentDragY;
+    
+    CGFloat _rotateDragX;
+    CGFloat _rotateDragY;
+    CGFloat _currentRotateX;
+    CGFloat _currentRotateY;
+    
+    __weak IBOutlet UILabel *UpdateLabel;
+    
+    __weak IBOutlet UILabel *swapLabel;
+    CodeSwap *swapObj;
 }
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKBaseEffect *effect;
@@ -99,6 +116,7 @@ GLfloat gCubeVertexData[216] =
 - (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file;
 - (BOOL)linkProgram:(GLuint)prog;
 - (BOOL)validateProgram:(GLuint)prog;
+
 @end
 
 @implementation GameViewController
@@ -117,6 +135,8 @@ GLfloat gCubeVertexData[216] =
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
+    swapObj = [[CodeSwap alloc] init];
+    
     [self setupControls];
     
     [self setupGL];
@@ -124,6 +144,7 @@ GLfloat gCubeVertexData[216] =
 
 - (void)setupControls {
     continueToRotate = true;
+    _scale = 1.0f;
 }
 
 - (void)dealloc
@@ -208,8 +229,8 @@ GLfloat gCubeVertexData[216] =
     
     self.effect.transform.projectionMatrix = projectionMatrix;
     
-    GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -4.0f);
-    baseModelViewMatrix = GLKMatrix4Rotate(baseModelViewMatrix, _rotation, 0.0f, 1.0f, 0.0f);
+    GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(_xPos + _currentDragX, _yPos + _currentDragY, -4.0f);
+    //baseModelViewMatrix = GLKMatrix4Rotate(baseModelViewMatrix, _rotation, 0.0f, 1.0f, 0.0f);
     
     // Compute the model view matrix for the object rendered with GLKit
     //GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
@@ -220,15 +241,23 @@ GLfloat gCubeVertexData[216] =
     
     // Compute the model view matrix for the object rendered with ES2
     GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
-    modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, _rotation, 1.0f, 1.0f, 1.0f);
+    //modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, _rotation, 1.0f, 1.0f, 1.0f);
+    modelViewMatrix = GLKMatrix4RotateX(modelViewMatrix, _rotateDragY + _currentRotateY);
+    modelViewMatrix = GLKMatrix4RotateY(modelViewMatrix, _rotateDragX + _currentRotateX + _rotation);
+    //modelViewMatrix = GLKMatrix4RotateZ(modelViewMatrix,);
+    GLKMatrix4 rotateDataMatrix = modelViewMatrix;
+    modelViewMatrix = GLKMatrix4Scale(modelViewMatrix, _scale, _scale, _scale);
     modelViewMatrix = GLKMatrix4Multiply(baseModelViewMatrix, modelViewMatrix);
+    
     
     _normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelViewMatrix), NULL);
     
     _modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
     
     if (continueToRotate)
-    _rotation += self.timeSinceLastUpdate * 0.5f;
+        _rotation += self.timeSinceLastUpdate * 0.5f;
+    
+    UpdateLabel.text = [NSString stringWithFormat: @"Position: x: %.2f y: %.2f z: %.2f\nRotation: x: %.2f y: %.2f z: %.2f", _xPos + _currentDragX, _yPos + _currentDragY, -4.0f, rotateDataMatrix.m00 * 180, rotateDataMatrix.m10 * 180, rotateDataMatrix.m20 * 180];
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -418,10 +447,65 @@ GLfloat gCubeVertexData[216] =
 }
 - (IBAction)ResetClick:(UIButton *)sender {
     _rotation = 0.0f;
+    _xPos = 0;
+    _yPos = 0;
+    _rotateDragX = 0;
+    _rotateDragY = 0;
 }
 - (IBAction)OnPinch:(UIPinchGestureRecognizer *)sender {
-    CGFloat scale = sender.scale;
+    if (!continueToRotate)
+        _scale = sender.scale;
+    
 }
+- (IBAction)OnDrag:(id)sender {
+    if (continueToRotate)
+        return;
+    
+    CGPoint offset = [sender translationInView:self.view];
+    if ([(UIPanGestureRecognizer *)sender state] != UIGestureRecognizerStateBegan) {
+        //offset.y *= -1;
+        offset.x /= [[self view] bounds].size.width * .5;
+        offset.y /= [[self view] bounds].size.height * .5;
+        _currentRotateX = offset.x;
+        _currentRotateY = offset.y;
+    }
+    if ([(UIPanGestureRecognizer *)sender state] == UIGestureRecognizerStateEnded) {
+        _rotateDragX += _currentRotateX;
+        _rotateDragY += _currentRotateY;
+        _currentRotateX = 0;
+        _currentRotateY = 0;
+    }
+    
+}
+- (IBAction)IncrementButton:(UIButton *)sender {
+    
+    [swapObj IncrementValue];
+    int val = [swapObj getValue];
+    bool type = swapObj.useObjC;
+    [swapObj switchType];
+    swapLabel.text = [NSString stringWithFormat: @"%@: %d", (type) ? @"ObjC" : @"CPP", val];
+}
+
+- (IBAction)OnDoubleDrag:(id)sender {
+    if (continueToRotate)
+        return;
+    CGPoint offset = [sender translationInView:self.view];
+    if ([(UIPanGestureRecognizer *)sender state] != UIGestureRecognizerStateBegan) {
+        offset.y *= -1;//= [[self view] bounds].size.height - offset.y;
+        //CGFloat scale = [[UIScreen mainScreen] scale];
+        offset.x /= [[self view] bounds].size.width * .5;
+        offset.y /= [[self view] bounds].size.height * .5;
+        _currentDragX = offset.x;
+        _currentDragY = offset.y;
+    }
+    if ([(UIPanGestureRecognizer *)sender state] == UIGestureRecognizerStateEnded) {
+        _xPos += _currentDragX;
+        _yPos += _currentDragY;
+        _currentDragX = 0;
+        _currentDragY = 0;
+    }
+}
+
 
 
 @end
